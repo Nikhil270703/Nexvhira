@@ -1,0 +1,382 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BrowserFrame from '../../components/BrowserFrame.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { products, statusLabel } from '../../data/products';
+import { whatsappLink } from '../../data/site';
+import type { Product } from '../../data/types';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+
+// Other products, live ones first, keeping the owner's order within each group.
+const more = products
+  .filter((o) => o.slug !== p.slug)
+  .sort((a, b) => Number(b.status === 'live') - Number(a.status === 'live'))
+  .slice(0, 3);
+
+const askText = `Hi Nexvhira, I'd like to know more about ${p.name}.`;
+---
+
+<BaseLayout title={p.name} description={`${p.tagline} ${p.summary}`}>
+  <section class="section product-hero">
+    <div class="container">
+      <nav aria-label="Breadcrumb" class="crumbs">
+        <ol role="list">
+          <li><a href="/products/">Products</a></li>
+          <li><span aria-current="page">{p.name}</span></li>
+        </ol>
+      </nav>
+
+      <div class:list={['product-hero__grid', { 'product-hero__grid--solo': !p.screenshot }]}>
+        <div class="product-hero__text">
+          <p class="product-hero__meta">
+            <span class:list={['status', { 'status--live': p.status === 'live' }]}>{statusLabel[p.status]}</span>
+            <span>Built for {p.industry.toLowerCase()}</span>
+          </p>
+          <h1>{p.name}</h1>
+          <p class="lede">{p.tagline}</p>
+          <p class="product-hero__summary">{p.summary}</p>
+          {
+            p.client && (
+              <p class="product-hero__client">
+                Client: <strong>{p.client.person}</strong>, {p.client.business}
+              </p>
+            )
+          }
+          <div class="product-hero__actions">
+            {
+              p.liveUrl && (
+                <a class="btn btn--primary" href={p.liveUrl} target="_blank" rel="noopener nofollow">
+                  {p.liveLabel ?? 'Open the live app'}
+                  <Icon name="external" />
+                  <span class="visually-hidden"> (opens in a new tab)</span>
+                </a>
+              )
+            }
+            <a
+              class:list={['btn', p.liveUrl ? 'btn--ghost' : 'btn--primary']}
+              href={whatsappLink(p.status === 'prototype' ? `Hi Nexvhira, I'd like a demo of ${p.name}.` : askText)}
+            >
+              <Icon name="chat" />
+              {p.status === 'prototype' ? 'Ask for a demo' : 'Ask about this product'}
+            </a>
+            {
+              p.codeUrl && (
+                <a class="text-link product-hero__code" href={p.codeUrl} target="_blank" rel="noopener">
+                  <Icon name="code" />
+                  View the code
+                  <span class="visually-hidden"> (opens in a new tab)</span>
+                </a>
+              )
+            }
+          </div>
+        </div>
+
+        {
+          p.screenshot && (
+            <div class="product-hero__media">
+              <BrowserFrame
+                src={p.screenshot}
+                alt={p.screenshotAlt ?? `Screenshot of ${p.name}`}
+                url={p.liveUrl}
+                loading="eager"
+                sizes="(min-width: 64rem) 38rem, 92vw"
+              />
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist details" aria-label={`About ${p.name}`}>
+    <div class="container">
+      <div class="details__list">
+        <div class="details__row">
+          <h2>The problem it solves</h2>
+          <p class="details__problem">{p.problem}</p>
+        </div>
+
+        <div class="details__row">
+          <h2>What it does</h2>
+          <ul role="list" class="details__features">
+            {
+              p.features.map((f) => (
+                <li>
+                  <Icon name="check" />
+                  <span>{f}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="details__row">
+          <h2>Who uses it</h2>
+          <ul role="list" class="details__tags">
+            {p.users.map((u) => <li>{u}</li>)}
+          </ul>
+        </div>
+
+        {
+          p.languages && p.languages.length > 0 && (
+            <div class="details__row">
+              <h2>Languages</h2>
+              <ul role="list" class="details__tags">
+                {p.languages.map((l) => (
+                  <li lang={l === 'मराठी' ? 'mr' : 'en'}>{l}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          p.tech && p.tech.length > 0 && (
+            <div class="details__row">
+              <h2>Built with</h2>
+              <ul role="list" class="details__tags">
+                {p.tech.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section more" aria-labelledby="more-title">
+    <div class="container more__grid">
+      <div class="more__head">
+        <h2 id="more-title">More from Nexvhira</h2>
+        <a class="text-link" href="/products/">All products</a>
+      </div>
+      <ul role="list" class="more__list">
+        {
+          more.map((o) => (
+            <li>
+              <a class="more__item" href={`/products/${o.slug}/`}>
+                <span class="more__name">{o.name}</span>
+                <span class="more__status">{statusLabel[o.status]}</span>
+                <span class="more__tagline">{o.tagline}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title={`Want something like ${p.name} for your business?`} />
+</BaseLayout>
+
+<style>
+  .product-hero {
+    padding-top: var(--space-6);
+  }
+
+  /* Breadcrumb */
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-7);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: var(--space-2);
+    color: var(--line-strong);
+  }
+  .crumbs a {
+    color: var(--ink-soft);
+  }
+  .crumbs a:hover {
+    color: var(--ink);
+  }
+
+  .product-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .product-hero__grid--solo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .product-hero__grid--solo .product-hero__text {
+    max-width: 44rem;
+  }
+  .product-hero__text > * + * {
+    margin-top: var(--space-4);
+  }
+  .product-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .product-hero h1 {
+    font-size: var(--step-5);
+    max-width: 16ch;
+  }
+  .product-hero__summary {
+    max-width: var(--measure);
+  }
+  .product-hero__client {
+    padding: var(--space-3) var(--space-4);
+    border-left: 3px solid var(--teal-bright);
+    background: var(--surface);
+    font-size: var(--step--1);
+  }
+  .product-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    padding-top: var(--space-4);
+  }
+  .product-hero__code {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .product-hero__code :global(svg) {
+    width: 1.05em;
+    height: 1.05em;
+  }
+  .product-hero__media {
+    padding-top: var(--space-2);
+  }
+
+  /* Detail rows */
+  .details {
+    padding-block: var(--space-8);
+  }
+  .details__list {
+    border-top: 1.5px solid var(--ink);
+  }
+  .details__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-3) var(--space-7);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .details__row h2 {
+    font-size: var(--step-2);
+    font-stretch: 106%;
+    line-height: 1.2;
+  }
+  .details__problem {
+    font-size: var(--step-1);
+    line-height: 1.55;
+    max-width: var(--measure);
+  }
+  .details__features {
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--measure);
+  }
+  .details__features li {
+    display: grid;
+    grid-template-columns: 1.1rem 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+  .details__features :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.3rem;
+    color: var(--teal);
+  }
+  .details__tags {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-content: start;
+  }
+  .details__tags li {
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-chip);
+    background: var(--surface);
+    line-height: 1.3;
+  }
+  .details__tags li[lang='mr'] {
+    font-family: var(--font-marathi);
+  }
+
+  /* More */
+  .more__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-6) var(--space-7);
+    align-items: start;
+  }
+  .more__head > * + * {
+    margin-top: var(--space-4);
+  }
+  .more__head h2 {
+    font-size: var(--step-3);
+  }
+  .more__head .text-link {
+    display: inline-block;
+  }
+  .more__list {
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+  .more__item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-1) var(--space-5);
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .more__item:hover .more__name {
+    text-decoration: underline;
+  }
+  .more__name {
+    font-family: var(--font-display);
+    font-stretch: 106%;
+    font-weight: 600;
+    font-size: var(--step-1);
+  }
+  .more__status {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    align-self: center;
+  }
+  .more__tagline {
+    grid-column: 1 / -1;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 56rem) {
+    .product-hero__grid,
+    .more__grid {
+      grid-template-columns: 1fr;
+    }
+    .details__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Message sent" description="Your message has reached Nexvhira." noindex>
+  <section class="section">
+    <div class="container note-page">
+      <h1>Thanks, we got your message.</h1>
+      <p class="lede">
+        We will read it and reply on the phone number or email you gave us. If we need more details to prepare a quote,
+        we will ask.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="/">Go to the home page</a>
+        <a class="btn btn--ghost" href="/products/">See our products</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .note-page {
+    max-width: 44rem;
+  }
+  .note-page h1 {
+    font-size: var(--step-4);
+  }
+  .note-page .lede {
+    margin-top: var(--space-5);
+  }
+  .note-page .btn-row {
+    margin-top: var(--space-6);
+  }
+</style>

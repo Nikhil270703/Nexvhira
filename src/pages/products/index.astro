@@ -1,0 +1,195 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductRow from '../../components/ProductRow.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { liveProducts, prototypes, statusLabel } from '../../data/products';
+import { whatsappLink } from '../../data/site';
+---
+
+<BaseLayout
+  title="Products"
+  description="Software Nexvhira has built: live apps for pharmacy distribution, flour milling and education, plus prototypes in AI, security and data analytics."
+>
+  <section class="section page-head">
+    <div class="container">
+      <div class="section-head">
+        <h1>Products</h1>
+        <p class="lede">
+          Apps we have built and shipped for real businesses, and the prototypes we are developing in our lab.
+        </p>
+      </div>
+
+      <div class="products">
+        {liveProducts.map((p, i) => <ProductRow product={p} flip={i % 2 === 1} headingLevel="h2" />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="prototypes-title">
+    <div class="container prototypes">
+      <div class="prototypes__head">
+        <h2 id="prototypes-title">Prototypes</h2>
+        <p class="lede">Working builds in AI, security and data analytics. Ask us for a demo.</p>
+      </div>
+
+      <ul role="list" class="prototypes__list">
+        {
+          prototypes.map((p) => (
+            <li class="proto">
+              <div class="proto__main">
+                <p class="proto__meta">
+                  <span class="status">{statusLabel[p.status]}</span>
+                  <span>{p.industry}</span>
+                </p>
+                <h3 class="proto__name">
+                  <a href={`/products/${p.slug}/`}>{p.name}</a>
+                </h3>
+                <p class="proto__tagline">{p.tagline}</p>
+                {p.tech && p.tech.length > 0 && (
+                  <p class="proto__tech">
+                    <span class="visually-hidden">Built with: </span>
+                    {p.tech.map((t) => (
+                      <span class="proto__chip">{t}</span>
+                    ))}
+                  </p>
+                )}
+              </div>
+              <div class="proto__actions">
+                <a class="text-link" href={`/products/${p.slug}/`}>
+                  Details<span class="visually-hidden"> of {p.name}</span>
+                </a>
+                <a class="proto__link" href={whatsappLink(`Hi Nexvhira, I'd like a demo of ${p.name}.`)}>
+                  <Icon name="chat" />
+                  Ask for a demo<span class="visually-hidden"> of {p.name}</span>
+                </a>
+                {p.codeUrl && (
+                  <a class="proto__link" href={p.codeUrl} target="_blank" rel="noopener">
+                    <Icon name="code" />
+                    View the code
+                    <span class="visually-hidden"> of {p.name} (opens in a new tab)</span>
+                  </a>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: var(--space-8);
+  }
+  .products {
+    display: grid;
+    gap: var(--space-9);
+  }
+
+  .prototypes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .prototypes__head > * + * {
+    margin-top: var(--space-4);
+  }
+  .prototypes__list {
+    margin: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .proto {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-4) var(--space-6);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .proto__main > * + * {
+    margin-top: var(--space-2);
+  }
+  .proto__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .proto__name {
+    font-size: var(--step-2);
+  }
+  .proto__name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .proto__name a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+  .proto__tagline {
+    color: var(--ink-soft);
+    max-width: 34rem;
+  }
+  .proto__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+  }
+  .proto__chip {
+    font-size: var(--step--1);
+    line-height: 1.2;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-chip);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .proto__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    min-width: 11rem;
+  }
+  .proto__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .proto__link:hover {
+    text-decoration: underline;
+  }
+  .proto__link :global(svg) {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+  }
+
+  @media (max-width: 56rem) {
+    .prototypes {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 40rem) {
+    .proto {
+      grid-template-columns: 1fr;
+    }
+    .proto__actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--space-3) var(--space-5);
+      padding-top: 0;
+      min-width: 0;
+    }
+  }
+</style>

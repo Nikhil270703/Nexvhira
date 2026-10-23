@@ -1,0 +1,161 @@
+---
+import BrowserFrame from './BrowserFrame.astro';
+import Icon from './Icon.astro';
+import type { Product } from '../data/types';
+import { statusLabel } from '../data/products';
+
+/** A full-width product feature: screenshot on one side, facts on the other. Alternates sides with `flip`. */
+interface Props {
+  product: Product;
+  flip?: boolean;
+  /** How many features to list (the product page shows all of them). */
+  maxFeatures?: number;
+  headingLevel?: 'h2' | 'h3';
+}
+const { product: p, flip = false, maxFeatures = 4, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const features = p.features.slice(0, maxFeatures);
+---
+
+<article class:list={['product-row', { 'product-row--flip': flip }]}>
+  {
+    p.screenshot && (
+      <a class="product-row__media" href={`/products/${p.slug}/`} tabindex="-1" aria-hidden="true">
+        <BrowserFrame src={p.screenshot} alt="" url={p.liveUrl} />
+      </a>
+    )
+  }
+  <div class="product-row__body">
+    <p class="product-row__meta">
+      <span class:list={['status', { 'status--live': p.status === 'live' }]}>{statusLabel[p.status]}</span>
+      <span>Built for {p.industry.toLowerCase()}</span>
+    </p>
+    <Heading class="product-row__name">
+      <a href={`/products/${p.slug}/`}>{p.name}</a>
+    </Heading>
+    <p class="product-row__tagline">{p.tagline}</p>
+    {
+      p.client && (
+        <p class="product-row__client">
+          Client: <strong>{p.client.person}</strong>, {p.client.business}
+        </p>
+      )
+    }
+    <ul role="list" class="product-row__features">
+      {
+        features.map((f) => (
+          <li>
+            <Icon name="check" />
+            <span>{f}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="product-row__actions">
+      <a class="btn btn--ghost" href={`/products/${p.slug}/`}>
+        View details<span class="visually-hidden"> of {p.name}</span>
+      </a>
+      {
+        p.liveUrl && (
+          <a class="text-link product-row__live" href={p.liveUrl} target="_blank" rel="noopener nofollow">
+            {p.liveLabel ?? 'Open the live app'}
+            <Icon name="external" />
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .product-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: center;
+  }
+  .product-row--flip .product-row__media {
+    order: 2;
+  }
+  .product-row__media {
+    display: block;
+    border-radius: var(--radius-frame);
+  }
+  .product-row__body > * + * {
+    margin-top: var(--space-4);
+  }
+  .product-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .product-row__name {
+    font-size: var(--step-4);
+  }
+  .product-row__name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .product-row__name a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+  .product-row__tagline {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    max-width: 30rem;
+  }
+  .product-row__client {
+    padding: var(--space-3) var(--space-4);
+    border-left: 3px solid var(--teal-bright);
+    background: var(--surface);
+    font-size: var(--step--1);
+  }
+  .product-row__features {
+    margin: var(--space-5) 0 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .product-row__features li {
+    display: grid;
+    grid-template-columns: 1.1rem 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+  .product-row__features :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.3rem;
+    color: var(--teal);
+  }
+  .product-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    padding-top: var(--space-3);
+  }
+  .product-row__live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .product-row__live :global(svg) {
+    width: 1em;
+    height: 1em;
+  }
+
+  @media (max-width: 56rem) {
+    .product-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+    .product-row--flip .product-row__media {
+      order: 0;
+    }
+  }
+</style>

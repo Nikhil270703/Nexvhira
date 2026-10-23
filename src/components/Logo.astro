@@ -1,0 +1,57 @@
+---
+/**
+ * Nexvhira logo: an "N" whose last stroke rises into an arrow (next, forward),
+ * followed by the lowercase wordmark. `tone` sets the wordmark colour.
+ */
+interface Props {
+  tone?: 'ink' | 'light';
+  size?: 'md' | 'lg';
+  wordmark?: boolean;
+  class?: string;
+}
+const { tone = 'ink', size = 'md', wordmark = true, class: className } = Astro.props;
+---
+
+<span class:list={['logo', `logo--${tone}`, `logo--${size}`, className]}>
+  <svg class="logo__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+    <rect width="40" height="40" rx="9" fill="#0B1D36"></rect>
+    <path d="M12 29V12l15 16" fill="none" stroke="#E8F1F4" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M27 28V11.5M22.4 16 27 11.4 31.6 16" fill="none" stroke="#5EE0CF" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  {wordmark && <span class="logo__word">nexvhira</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    line-height: 1;
+  }
+  .logo__mark {
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: none;
+  }
+  .logo--lg .logo__mark {
+    width: 3rem;
+    height: 3rem;
+  }
+  .logo__word {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-stretch: 118%;
+    font-size: 1.45rem;
+    letter-spacing: -0.02em;
+    padding-bottom: 0.1em;
+  }
+  .logo--lg .logo__word {
+    font-size: 2rem;
+  }
+  .logo--ink .logo__word {
+    color: var(--ink);
+  }
+  .logo--light .logo__word {
+    color: var(--on-dark);
+  }
+</style>

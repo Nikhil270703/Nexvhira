@@ -1,0 +1,465 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BrowserFrame from '../components/BrowserFrame.astro';
+import ProductRow from '../components/ProductRow.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { site, whatsappLink } from '../data/site';
+import { liveProducts, prototypes, getProduct } from '../data/products';
+import { services } from '../data/services';
+import { steps, faqs } from '../data/content';
+import { clients } from '../data/clients';
+
+// Hero stack: back to front.
+const heroStack = ['pharmacy-distribution-erp', 'auraedu', 'flour-mill']
+  .map((slug) => getProduct(slug))
+  .filter((p) => p?.screenshot);
+
+const firstClient = clients[0];
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero__grid">
+      <div class="hero__text">
+        <h1>{site.tagline}</h1>
+        <p class="hero__mr marathi" lang="mr">{site.taglineMr}</p>
+        <p class="lede">
+          Nexvhira is a software company in Pune. We build stock, billing, order and institute-management apps for
+          local businesses, in English and मराठी, on the phones your team already uses.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href={whatsappLink('Hi Nexvhira, I would like to discuss a project.')}>
+            <Icon name="chat" />
+            Message us on WhatsApp
+          </a>
+          <a class="btn btn--ghost" href="#products">See what we've built</a>
+        </div>
+      </div>
+
+      <div class="hero__stack" aria-label="Screens from our live products" role="group">
+        {
+          heroStack.map((p, i) => (
+            <div class:list={['hero__card', `hero__card--${i + 1}`]}>
+              <BrowserFrame
+                src={p!.screenshot!}
+                alt={p!.screenshotAlt ?? p!.name}
+                url={p!.liveUrl}
+                loading="eager"
+                sizes="(min-width: 64rem) 30rem, 80vw"
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Built for -->
+  <section class="built-for" aria-label="Who we build for">
+    <div class="container built-for__inner">
+      <p>
+        Built for pharmacy distributors, flour mills and education institutes.
+        {
+          firstClient && (
+            <>
+              {' '}We built the stock and order app for <strong>{firstClient.person}</strong> of {firstClient.business}.
+            </>
+          )
+        }
+      </p>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="section" id="products" aria-labelledby="products-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="products-title">Software we've built and shipped</h2>
+        <p class="lede">Three apps live today, each built around one business's daily work.</p>
+      </div>
+
+      <div class="products">
+        {liveProducts.map((p, i) => <ProductRow product={p} flip={i % 2 === 1} />)}
+      </div>
+
+      <div class="lab" aria-labelledby="lab-title">
+        <div class="lab__head">
+          <h3 id="lab-title">From our lab</h3>
+          <p>Working prototypes in AI, security and data analytics. Demos on request.</p>
+        </div>
+        <ul role="list" class="lab__list">
+          {
+            prototypes.map((p) => (
+              <li>
+                <a href={`/products/${p.slug}/`} class="lab__item">
+                  <span class="lab__name">{p.name}</span>
+                  <span class="lab__tagline">{p.tagline}</span>
+                  <span class="lab__industry">{p.industry}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section section--mist" aria-labelledby="services-title">
+    <div class="container services">
+      <div class="services__head">
+        <h2 id="services-title">What we can build for you</h2>
+        <p class="lede">From a single dashboard to the software your whole business runs on.</p>
+        <a class="text-link" href="/services/">How each service works</a>
+      </div>
+      <dl class="services__list">
+        {
+          services.map((s) => (
+            <div class="services__item">
+              <dt>{s.name}</dt>
+              <dd>{s.summary}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section" aria-labelledby="process-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="process-title">How a project runs</h2>
+        <p class="lede">You see the price before we start and working screens while we build.</p>
+      </div>
+      <ol role="list" class="steps">
+        {
+          steps.map((s, i) => (
+            <li class="step">
+              <span class="step__num" aria-hidden="true">{i + 1}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section--mist" aria-labelledby="faq-title">
+    <div class="container faq">
+      <h2 id="faq-title">Questions owners ask us</h2>
+      <div class="faq__list">
+        {
+          faqs.map((f) => (
+            <details class="faq__item">
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero {
+    padding-block: var(--space-8) var(--space-9);
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: center;
+  }
+  .hero__text > * + * {
+    margin-top: var(--space-5);
+  }
+  .hero h1 {
+    max-width: 14ch;
+  }
+  .hero__mr {
+    font-size: var(--step-3);
+    margin-top: var(--space-4);
+  }
+  .hero .lede {
+    margin-top: var(--space-6);
+  }
+  .hero .btn-row {
+    margin-top: var(--space-6);
+  }
+
+  .hero__stack {
+    position: relative;
+    aspect-ratio: 1 / 0.92;
+  }
+  .hero__card {
+    position: absolute;
+    width: 82%;
+  }
+  .hero__card--1 {
+    top: 0;
+    right: 0;
+  }
+  .hero__card--2 {
+    top: 24%;
+    left: 0;
+  }
+  .hero__card--3 {
+    bottom: 0;
+    right: 6%;
+  }
+  .hero__card--3 :global(.frame) {
+    box-shadow:
+      0 1px 0 rgb(11 29 54 / 0.04),
+      0 28px 60px -20px rgb(11 29 54 / 0.5);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__card {
+      animation: deal 700ms var(--ease-out) both;
+    }
+    .hero__card--2 {
+      animation-delay: 120ms;
+    }
+    .hero__card--3 {
+      animation-delay: 240ms;
+    }
+    @keyframes deal {
+      from {
+        opacity: 0;
+        transform: translateY(24px) rotate(-1.5deg);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+
+  /* Built for */
+  .built-for {
+    background: var(--mist);
+    border-block: 1px solid var(--line);
+  }
+  .built-for__inner {
+    padding-block: var(--space-5);
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+  .built-for strong {
+    color: var(--ink);
+  }
+
+  /* Products */
+  .products {
+    display: grid;
+    gap: var(--space-9);
+  }
+  .lab {
+    margin-top: var(--space-9);
+    padding-top: var(--space-7);
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-6);
+  }
+  .lab__head h3 {
+    font-size: var(--step-3);
+  }
+  .lab__head p {
+    margin-top: var(--space-3);
+    color: var(--ink-soft);
+  }
+  .lab__list {
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+  .lab__item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-1) var(--space-5);
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .lab__item:hover .lab__name {
+    text-decoration: underline;
+  }
+  .lab__name {
+    font-family: var(--font-display);
+    font-stretch: 106%;
+    font-weight: 600;
+    font-size: var(--step-1);
+  }
+  .lab__industry {
+    grid-row: 1;
+    grid-column: 2;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    align-self: center;
+  }
+  .lab__tagline {
+    grid-column: 1 / -1;
+    color: var(--ink-soft);
+  }
+
+  /* Services */
+  .services {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .services__head {
+    position: sticky;
+    top: 6rem;
+  }
+  .services__head > * + * {
+    margin-top: var(--space-4);
+  }
+  .services__head .text-link {
+    display: inline-block;
+    margin-top: var(--space-5);
+  }
+  .services__list {
+    border-top: 1.5px solid var(--ink);
+  }
+  .services__item {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    gap: var(--space-2) var(--space-6);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .services__item dt {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-stretch: 106%;
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+  .services__item dd {
+    color: var(--ink-soft);
+  }
+
+  /* Process */
+  .steps {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    counter-reset: none;
+  }
+  .step {
+    padding-top: var(--space-4);
+    border-top: 1.5px solid var(--ink);
+  }
+  .step__num {
+    display: block;
+    font-family: var(--font-display);
+    font-stretch: 120%;
+    font-weight: 300;
+    font-size: var(--step-5);
+    line-height: 1;
+    color: var(--teal-bright);
+  }
+  .step h3 {
+    margin-top: var(--space-4);
+    font-size: var(--step-1);
+  }
+  .step p {
+    margin-top: var(--space-2);
+    color: var(--ink-soft);
+  }
+
+  /* FAQ */
+  .faq {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .faq__list {
+    border-top: 1.5px solid var(--ink);
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .faq__item summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    font-weight: 600;
+    font-size: var(--step-1);
+    line-height: 1.35;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__item summary::after {
+    content: '+';
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--teal);
+    transition: transform 200ms var(--ease-out);
+  }
+  .faq__item[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .faq__item p {
+    padding-bottom: var(--space-5);
+    color: var(--ink-soft);
+    max-width: var(--measure);
+  }
+
+  /* Responsive */
+  @media (max-width: 64rem) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .hero__grid,
+    .services,
+    .faq,
+    .lab {
+      grid-template-columns: 1fr;
+    }
+    .hero__stack {
+      max-width: 34rem;
+    }
+    .services__head {
+      position: static;
+    }
+    .services__item {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 34rem) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    .lab__item {
+      grid-template-columns: 1fr;
+    }
+    .lab__industry {
+      grid-row: auto;
+      grid-column: 1;
+    }
+  }
+</style>

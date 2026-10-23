@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, telLink, mailLink } from '../data/site';
+
+const effective = '23 October 2026';
+---
+
+<BaseLayout title="Terms of use" description="The terms for using the Nexvhira website.">
+  <section class="section section--tight">
+    <div class="container">
+      <article class="prose">
+        <h1>Terms of use</h1>
+        <p class="lede">Effective {effective}</p>
+
+        <p>These terms cover your use of this website. By using it, you agree to them.</p>
+
+        <h2>About this website</h2>
+        <p>
+          This website is run by {site.name}, a software company based in {site.city}, {site.region}. It describes our
+          services and the software we have built.
+        </p>
+
+        <h2>Information, not an offer</h2>
+        <p>
+          The content on this website is general information. It is not a binding offer. Every project is agreed
+          separately in a written quote, and that quote sets out the scope, price and timeline.
+        </p>
+
+        <h2>Product names and screenshots</h2>
+        <p>
+          Product names, logos and screenshots shown here belong to their owners, including our clients. They are
+          shown to describe work we have done, and may not be copied or reused without permission.
+        </p>
+
+        <h2>Links to other websites</h2>
+        <p>
+          Some links open live apps and other websites that we do not control, including apps we built for clients.
+          We are not responsible for their content or availability.
+        </p>
+
+        <h2>No guarantees</h2>
+        <p>
+          We try to keep this website accurate and available, but we provide it as it is, without guarantees. To the
+          extent the law allows, we are not liable for any loss that comes from using it or relying on it.
+        </p>
+
+        <h2>Law and courts</h2>
+        <p>These terms are governed by the laws of India. Any dispute goes to the courts in {site.city}.</p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms: <a href={mailLink}>{site.email}</a> or <a href={telLink}>{site.phoneDisplay}</a>.
+        </p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose .lede {
+    margin-top: var(--space-3);
+    font-size: var(--step-0);
+  }
+  .prose h1 {
+    font-size: var(--step-4);
+  }
+</style>

@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Icon from '../components/Icon.astro';
+import { site, whatsappLink, telLink, mailLink } from '../data/site';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Talk to Nexvhira about software for your business. Message us on WhatsApp, call, email, or send the enquiry form. Based in Pune."
+>
+  <section class="page-head">
+    <div class="container">
+      <h1>Talk to us</h1>
+      <p class="lede">
+        Tell us about your business and what you want the software to do. We reply with questions, then a written
+        quote.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight contact" aria-label="Contact options">
+    <div class="container contact__grid">
+      <div class="contact__form">
+        <h2>Send an enquiry</h2>
+        <ContactForm />
+      </div>
+
+      <aside class="contact__direct" aria-labelledby="direct-title">
+        <h2 id="direct-title">Or reach us directly</h2>
+        <ul role="list" class="direct">
+          <li>
+            <a href={whatsappLink('Hi Nexvhira, I would like to discuss a project.')} class="direct__item">
+              <Icon name="chat" />
+              <span>
+                <span class="direct__label">WhatsApp</span>
+                <span class="direct__value">{site.phoneDisplay}</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href={telLink} class="direct__item">
+              <Icon name="phone" />
+              <span>
+                <span class="direct__label">Call</span>
+                <span class="direct__value">{site.phoneDisplay}</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href={mailLink} class="direct__item">
+              <Icon name="mail" />
+              <span>
+                <span class="direct__label">Email</span>
+                <span class="direct__value">{site.email}</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <div class="direct__item">
+              <Icon name="pin" />
+              <span>
+                <span class="direct__label">Location</span>
+                <span class="direct__value">{site.city}, {site.region}</span>
+              </span>
+            </div>
+          </li>
+        </ul>
+        <p class="direct__note">We can meet in person around {site.city}.</p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-block: var(--space-8) var(--space-6);
+  }
+  .page-head .lede {
+    margin-top: var(--space-5);
+  }
+
+  .contact {
+    padding-top: var(--space-6);
+  }
+  .contact__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .contact h2 {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-5);
+  }
+  .contact__form {
+    padding-top: var(--space-5);
+    border-top: 1.5px solid var(--ink);
+  }
+  .contact__direct {
+    padding-top: var(--space-5);
+    border-top: 1.5px solid var(--ink);
+    position: sticky;
+    top: 6rem;
+  }
+  .direct {
+    margin: 0;
+  }
+  .direct__item {
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .direct__item :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    color: var(--teal);
+  }
+  a.direct__item:hover .direct__value {
+    text-decoration: underline;
+  }
+  .direct__label {
+    display: block;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .direct__value {
+    display: block;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .direct__note {
+    margin-top: var(--space-4);
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 56rem) {
+    .contact__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-7);
+    }
+    .contact__direct {
+      position: static;
+    }
+  }
+</style>

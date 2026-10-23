@@ -1,0 +1,331 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { team } from '../data/team';
+import { clients } from '../data/clients';
+import { liveProducts, getProduct } from '../data/products';
+
+const principles = [
+  {
+    title: 'Plain language',
+    body: 'We describe what the software does in the words your staff already use, not in technical terms.',
+  },
+  {
+    title: 'Built for phones',
+    body: 'Everything we build works in a phone’s browser, because that is where most of your team will use it.',
+  },
+  {
+    title: 'English and मराठी',
+    body: 'Our pharmacy and flour mill apps switch between English and Marathi, so everyone in the business can read them.',
+  },
+  {
+    title: 'A written quote before work starts',
+    body: 'You see the scope, the price and the timeline in writing before we build anything.',
+  },
+];
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]!.toUpperCase())
+    .join('');
+---
+
+<BaseLayout
+  title="About"
+  description="Nexvhira is a software company in Pune that builds business software, websites, dashboards and AI tools for small and growing businesses."
+>
+  <section class="page-head">
+    <div class="container">
+      <h1>About Nexvhira</h1>
+      <p class="lede">{site.description}</p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="built-title">
+    <div class="container split">
+      <h2 id="built-title">What we've built</h2>
+      <div class="split__body">
+        <p>We build software around one business’s daily work at a time. These are live today:</p>
+        <ul role="list" class="built-list">
+          {
+            liveProducts.map((p) => (
+              <li>
+                <a href={`/products/${p.slug}/`}>{p.name}</a>
+                <span>{p.tagline}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p>
+          <a class="text-link" href="/products/">See all products and prototypes</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="how-title">
+    <div class="container split">
+      <h2 id="how-title">How we work</h2>
+      <dl class="ruled">
+        {
+          principles.map((p) => (
+            <div class="ruled__item">
+              <dt>{p.title}</dt>
+              <dd>{p.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="people-title">
+    <div class="container split">
+      <h2 id="people-title">People</h2>
+      <ul role="list" class="people">
+        {
+          team.map((m) => (
+            <li class="person">
+              <span class="person__mono" aria-hidden="true">
+                {initials(m.name)}
+              </span>
+              <div>
+                <p class="person__name">{m.name}</p>
+                <p class="person__role">{m.role}</p>
+                {m.bio && <p class="person__bio">{m.bio}</p>}
+                {(m.linkedin || m.github) && (
+                  <p class="person__links">
+                    {m.linkedin && (
+                      <a href={m.linkedin} rel="noopener">
+                        <Icon name="linkedin" />
+                        LinkedIn<span class="visually-hidden"> profile of {m.name}</span>
+                      </a>
+                    )}
+                    {m.github && (
+                      <a href={m.github} rel="noopener">
+                        <Icon name="github" />
+                        GitHub<span class="visually-hidden"> profile of {m.name}</span>
+                      </a>
+                    )}
+                  </p>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    clients.length > 0 && (
+      <section class="section section--mist" aria-labelledby="clients-title">
+        <div class="container split">
+          <h2 id="clients-title">Clients</h2>
+          <ul role="list" class="ruled">
+            {clients.map((c) => {
+              const product = c.product ? getProduct(c.product) : undefined;
+              return (
+                <li class="ruled__item">
+                  <p class="client__name">{c.person}</p>
+                  <p class="client__business">
+                    {c.business}, {c.industry.toLowerCase()}
+                  </p>
+                  {product && (
+                    <p class="client__product">
+                      We built: <a href={`/products/${product.slug}/`}>{product.name}</a>
+                    </p>
+                  )}
+                  {c.quote && <blockquote class="client__quote">“{c.quote}”</blockquote>}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section--tight" aria-labelledby="where-title">
+    <div class="container split">
+      <h2 id="where-title">Where we are</h2>
+      <div class="split__body">
+        <p class="where">
+          <Icon name="pin" />
+          <span>Based in {site.city}, {site.region}.</span>
+        </p>
+        <p>We work with clients over WhatsApp and calls, and can meet in person around {site.city}.</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-block: var(--space-8) var(--space-6);
+  }
+  .page-head .lede {
+    margin-top: var(--space-5);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: var(--space-5) var(--space-7);
+    align-items: start;
+  }
+  .split > h2 {
+    font-size: var(--step-3);
+  }
+  .split__body {
+    max-width: var(--measure);
+    font-size: var(--step-1);
+    line-height: 1.55;
+  }
+  .split__body > * + * {
+    margin-top: var(--space-4);
+  }
+  .split__body .text-link {
+    font-size: var(--step-0);
+  }
+  .built-list {
+    margin: 0;
+    border-top: 1px solid var(--line-strong);
+    font-size: var(--step-0);
+  }
+  .built-list li {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .built-list a {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-stretch: 106%;
+    font-size: var(--step-1);
+  }
+  .built-list span {
+    color: var(--ink-soft);
+  }
+
+  .ruled {
+    margin: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .ruled__item {
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .ruled__item dt,
+  .client__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-stretch: 106%;
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+  .ruled__item dd {
+    margin-top: var(--space-2);
+    color: var(--ink-soft);
+    max-width: var(--measure);
+  }
+  .client__business {
+    margin-top: var(--space-1);
+    color: var(--ink-soft);
+  }
+  .client__product {
+    margin-top: var(--space-3);
+  }
+  .client__product a {
+    font-weight: 600;
+  }
+  .client__quote {
+    margin-top: var(--space-4);
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--teal-bright);
+    font-size: var(--step-1);
+  }
+
+  .people {
+    margin: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .person {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-5);
+    align-items: center;
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .person__mono {
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--teal-glow);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-stretch: 112%;
+    font-size: var(--step-1);
+    letter-spacing: 0.02em;
+  }
+  .person__name {
+    font-family: var(--font-display);
+    font-weight: 620;
+    font-stretch: 108%;
+    font-size: var(--step-2);
+    line-height: 1.2;
+  }
+  .person__role {
+    color: var(--ink-soft);
+  }
+  .person__bio {
+    margin-top: var(--space-2);
+    max-width: var(--measure);
+  }
+  .person__links {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+  }
+  .person__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: 600;
+  }
+  .person__links :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .where {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+  }
+  .where :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--teal);
+    flex: none;
+  }
+
+  @media (max-width: 56rem) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

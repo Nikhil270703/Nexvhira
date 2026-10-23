@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, telLink, mailLink } from '../data/site';
+
+const effective = '23 October 2026';
+---
+
+<BaseLayout
+  title="Privacy notice"
+  description="How Nexvhira collects, uses and protects the personal data you share when you contact us."
+>
+  <section class="section section--tight">
+    <div class="container">
+      <article class="prose">
+        <h1>Privacy notice</h1>
+        <p class="lede">Effective {effective}</p>
+
+        <p>
+          This notice explains what personal data {site.name} collects when you use this website or contact us, why we
+          collect it, who else handles it, and the rights you have under India’s Digital Personal Data Protection Act,
+          2023.
+        </p>
+
+        <h2>Who we are</h2>
+        <p>
+          {site.name} is a software company based in {site.city}, {site.region}, {site.country}. For this website and
+          your enquiries, we decide how your personal data is used.
+        </p>
+
+        <h2>What we collect</h2>
+        <ul>
+          <li>
+            <strong>From the enquiry form:</strong> your name, phone or WhatsApp number, and anything else you choose to
+            give us, such as your email address, business name, the service you are interested in and your message.
+          </li>
+          <li>
+            <strong>When you contact us directly:</strong> your phone number, WhatsApp name and number, or email
+            address, and the messages you send us.
+          </li>
+        </ul>
+        <p>We do not ask for, and you should not send us, passwords, bank details or identity documents.</p>
+
+        <h2>Why we use it</h2>
+        <p>
+          We use your data only to reply to your enquiry, discuss your project and prepare a quote. We do not sell
+          your data or use it for advertising.
+        </p>
+
+        <h2>Your consent</h2>
+        <p>
+          We process your data because you agree to it when you send the form or contact us. You can withdraw your
+          consent at any time by writing to us. After that we stop using your data, though this does not affect what
+          we did before you withdrew.
+        </p>
+
+        <h2>Who else handles your data</h2>
+        <ul>
+          <li>
+            <strong>Web3Forms</strong> delivers enquiry-form messages to our email inbox.
+          </li>
+          <li>
+            <strong>Cloudflare</strong> hosts this website and may process your IP address to deliver pages and protect
+            the site from attacks.
+          </li>
+          <li>
+            <strong>Meta (WhatsApp)</strong> and <strong>Google (Gmail)</strong> carry your messages when you contact us
+            on WhatsApp or by email.
+          </li>
+        </ul>
+        <p>Each of these services handles data under its own privacy policy.</p>
+
+        <h2>How long we keep it</h2>
+        <p>
+          If your enquiry does not become a project, we delete your details within 12 months. If you become a client,
+          we keep what we need for the project and for our records for as long as the law requires.
+        </p>
+
+        <h2>Cookies and tracking</h2>
+        <p>
+          This website does not set cookies and does not use advertising trackers. We may use Cloudflare Web
+          Analytics, which counts visits without cookies and without identifying you.
+        </p>
+
+        <h2>Your rights</h2>
+        <p>You can ask us to:</p>
+        <ul>
+          <li>tell you what personal data we hold about you and how we use it;</li>
+          <li>correct, complete or update it;</li>
+          <li>erase it, unless we must keep it by law;</li>
+          <li>stop using it, by withdrawing your consent;</li>
+          <li>
+            act on your behalf through a person you nominate, if you die or become unable to exercise these rights.
+          </li>
+        </ul>
+
+        <h2>Questions and complaints</h2>
+        <p>
+          Contact {site.founder.name}, {site.founder.role}, at <a href={mailLink}>{site.email}</a> or
+          <a href={telLink}>{site.phoneDisplay}</a>. We aim to reply within 7 days.
+        </p>
+        <p>
+          If you are not satisfied with our reply, you can complain to the Data Protection Board of India.
+        </p>
+
+        <h2>Changes to this notice</h2>
+        <p>
+          If we change how we handle your data, we will update this page and the effective date at the top.
+        </p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose .lede {
+    margin-top: var(--space-3);
+    font-size: var(--step-0);
+  }
+  .prose h1 {
+    font-size: var(--step-4);
+  }
+</style>

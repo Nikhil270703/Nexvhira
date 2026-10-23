@@ -1,0 +1,402 @@
+---
+import Icon from './Icon.astro';
+import { site, telLink, mailLink } from '../data/site';
+import { services } from '../data/services';
+
+/**
+ * Enquiry form.
+ * - With a Web3Forms key in site.ts: posts to Web3Forms (works without JavaScript;
+ *   with JavaScript it sends in the background and confirms on the page).
+ * - Without a key: opens WhatsApp with the enquiry filled in.
+ */
+const hasKey = site.web3formsKey.trim().length > 0;
+const redirect = new URL('/thanks/', Astro.site).href;
+const serviceOptions = [...services.map((s) => s.name), 'Something else'];
+---
+
+<form
+  class="contact-form"
+  data-contact-form
+  data-mode={hasKey ? 'web3forms' : 'whatsapp'}
+  method="post"
+  action={hasKey ? 'https://api.web3forms.com/submit' : undefined}
+  aria-describedby="form-intro"
+>
+  <p id="form-intro" class="contact-form__intro">Fields marked “required” must be filled in.</p>
+
+  {
+    hasKey && (
+      <>
+        <input type="hidden" name="access_key" value={site.web3formsKey} />
+        <input type="hidden" name="subject" value="New enquiry from the Nexvhira website" />
+        <input type="hidden" name="from_name" value="Nexvhira website" />
+        <input type="hidden" name="redirect" value={redirect} />
+      </>
+    )
+  }
+  <input type="checkbox" name="botcheck" class="contact-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <div class="field">
+    <label for="cf-name">Your name <span class="field__req">(required)</span></label>
+    <input id="cf-name" name="name" type="text" autocomplete="name" required aria-describedby="cf-name-err" />
+    <p class="field__error" id="cf-name-err" hidden></p>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="cf-phone">Phone or WhatsApp number <span class="field__req">(required)</span></label>
+      <input
+        id="cf-phone"
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        required
+        aria-describedby="cf-phone-err"
+      />
+      <p class="field__error" id="cf-phone-err" hidden></p>
+    </div>
+    <div class="field">
+      <label for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" aria-describedby="cf-email-err" />
+      <p class="field__error" id="cf-email-err" hidden></p>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="cf-business">Business name</label>
+      <input id="cf-business" name="business" type="text" autocomplete="organization" />
+    </div>
+    <div class="field">
+      <label for="cf-service">What do you need?</label>
+      <select id="cf-service" name="service">
+        <option value="">Choose one</option>
+        {serviceOptions.map((name) => <option value={name}>{name}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cf-message">Tell us about it <span class="field__req">(required)</span></label>
+    <textarea
+      id="cf-message"
+      name="message"
+      rows="5"
+      required
+      aria-describedby="cf-message-hint cf-message-err"></textarea>
+    <p class="field__hint" id="cf-message-hint">What does your business do, and what should the software help with?</p>
+    <p class="field__error" id="cf-message-err" hidden></p>
+  </div>
+
+  <div class="field field--check">
+    <input id="cf-consent" name="consent" type="checkbox" value="yes" required aria-describedby="cf-consent-err" />
+    <label for="cf-consent">
+      I agree that Nexvhira may contact me about this enquiry. Read our <a href="/privacy/">privacy notice</a>.{' '}
+      <span class="field__req">(required)</span>
+    </label>
+    <p class="field__error" id="cf-consent-err" hidden></p>
+  </div>
+
+  <div class="contact-form__actions">
+    <button class="btn btn--primary" type="submit" data-submit>
+      {hasKey ? 'Send message' : <><Icon name="chat" />Send on WhatsApp</>}
+    </button>
+    {
+      !hasKey && (
+        <p class="contact-form__note">This opens WhatsApp with your message filled in. You press send.</p>
+      )
+    }
+  </div>
+
+  <div class="contact-form__status" role="status" aria-live="polite" data-form-status></div>
+
+  {
+    !hasKey && (
+      <noscript>
+        <p class="contact-form__noscript">
+          This form needs JavaScript to open WhatsApp. You can call us on <a href={telLink}>{site.phoneDisplay}</a>{' '}
+          or email <a href={mailLink}>{site.email}</a>.
+        </p>
+      </noscript>
+    )
+  }
+</form>
+
+<script>
+  import { whatsappLink } from '../data/site';
+
+  type FieldCheck = { id: string; test: (el: HTMLInputElement | HTMLTextAreaElement) => string };
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    const mode = form.dataset.mode === 'web3forms' ? 'web3forms' : 'whatsapp';
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    // JavaScript takes over validation so errors can be described in words.
+    form.noValidate = true;
+
+    const checks: FieldCheck[] = [
+      { id: 'cf-name', test: (el) => (el.value.trim() ? '' : 'Enter your name.') },
+      {
+        id: 'cf-phone',
+        test: (el) => {
+          const digits = el.value.replace(/\D/g, '');
+          if (!digits) return 'Enter a phone or WhatsApp number so we can reply.';
+          if (digits.length < 10) return 'Enter the full number, with at least 10 digits.';
+          return '';
+        },
+      },
+      {
+        id: 'cf-email',
+        test: (el) =>
+          !el.value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())
+            ? ''
+            : 'Enter an email like name@example.com, or leave it empty.',
+      },
+      { id: 'cf-message', test: (el) => (el.value.trim() ? '' : 'Tell us briefly what you need.') },
+      {
+        id: 'cf-consent',
+        test: (el) => ((el as HTMLInputElement).checked ? '' : 'Tick the box so we can contact you about this enquiry.'),
+      },
+    ];
+
+    const setError = (id: string, message: string) => {
+      const field = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`);
+      const error = form.querySelector<HTMLElement>(`#${id}-err`);
+      if (!field || !error) return;
+      if (message) {
+        field.setAttribute('aria-invalid', 'true');
+        error.textContent = message;
+        error.hidden = false;
+      } else {
+        field.removeAttribute('aria-invalid');
+        error.textContent = '';
+        error.hidden = true;
+      }
+    };
+
+    const validate = (): HTMLElement | null => {
+      let firstInvalid: HTMLElement | null = null;
+      for (const check of checks) {
+        const el = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${check.id}`);
+        if (!el) continue;
+        const message = check.test(el);
+        setError(check.id, message);
+        if (message && !firstInvalid) firstInvalid = el;
+      }
+      return firstInvalid;
+    };
+
+    // Clear a field's error as soon as it is fixed. `input` (not `change`) so the
+    // layout settles while typing, never in the middle of a click elsewhere.
+    for (const check of checks) {
+      const el = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${check.id}`);
+      el?.addEventListener('input', () => {
+        if (el.getAttribute('aria-invalid') === 'true') setError(check.id, check.test(el));
+      });
+    }
+
+    const value = (name: string) => {
+      const el = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+      return el ? el.value.trim() : '';
+    };
+
+    const whatsappMessage = () => {
+      const lines = ['Hi Nexvhira, I would like to discuss a project.', `Name: ${value('name')}`, `Phone: ${value('phone')}`];
+      if (value('email')) lines.push(`Email: ${value('email')}`);
+      if (value('business')) lines.push(`Business: ${value('business')}`);
+      if (value('service')) lines.push(`Service: ${value('service')}`);
+      lines.push('', value('message'));
+      return lines.join('\n');
+    };
+
+    const showStatus = (kind: 'success' | 'error' | 'info', text: string, fallback = false) => {
+      status.replaceChildren();
+      status.className = `contact-form__status contact-form__status--${kind}`;
+      const p = document.createElement('p');
+      p.textContent = text;
+      status.append(p);
+      if (fallback) {
+        const a = document.createElement('a');
+        a.href = whatsappLink(whatsappMessage());
+        a.textContent = 'Send it on WhatsApp instead';
+        a.className = 'text-link';
+        status.append(a);
+      }
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const honeypot = form.elements.namedItem('botcheck') as HTMLInputElement | null;
+      if (honeypot?.checked) return;
+
+      const firstInvalid = validate();
+      if (firstInvalid) {
+        showStatus('error', 'Some details are missing. Check the highlighted fields.');
+        firstInvalid.focus();
+        return;
+      }
+
+      if (mode === 'whatsapp') {
+        showStatus('info', 'Opening WhatsApp with your message…');
+        window.location.href = whatsappLink(whatsappMessage());
+        return;
+      }
+
+      submit.disabled = true;
+      showStatus('info', 'Sending your message…');
+      try {
+        const data: Record<string, string> = {};
+        new FormData(form).forEach((v, k) => {
+          if (typeof v === 'string' && k !== 'redirect' && k !== 'botcheck') data[k] = v;
+        });
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const json = (await res.json().catch(() => ({}))) as { success?: boolean };
+        if (!res.ok || !json.success) throw new Error('send failed');
+        form.reset();
+        showStatus('success', 'Thanks, we got your message. We will reply on the phone number or email you gave.');
+      } catch {
+        showStatus('error', 'Your message could not be sent. Check your connection and try again.', true);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact-form {
+    --error: #b3261e;
+    display: grid;
+    gap: var(--space-5);
+  }
+  .contact-form__intro {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .contact-form__hp {
+    display: none;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+  .field {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+  .field label {
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .field__req {
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+  .field input:not([type='checkbox']),
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface);
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--radius-control);
+    line-height: 1.4;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-color: var(--ink-soft);
+  }
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    border-color: var(--teal);
+    outline-offset: 1px;
+  }
+  .field [aria-invalid='true'] {
+    border-color: var(--error);
+  }
+  .field__hint {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .field__error {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--error);
+  }
+  .field--check {
+    grid-template-columns: auto 1fr;
+    column-gap: var(--space-3);
+    align-items: start;
+  }
+  .field--check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    accent-color: var(--teal);
+  }
+  .field--check label {
+    font-weight: 400;
+  }
+  .field--check .field__error {
+    grid-column: 2;
+  }
+  .contact-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+  .contact-form__actions .btn[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .contact-form__note {
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+    max-width: 22rem;
+  }
+  .contact-form__status:empty {
+    display: none;
+  }
+  .contact-form__status {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-left: 3px solid var(--line-strong);
+    background: var(--surface);
+  }
+  .contact-form__status--success {
+    border-left-color: var(--teal-bright);
+  }
+  .contact-form__status--error {
+    border-left-color: var(--error);
+  }
+  .contact-form__noscript {
+    padding: var(--space-3) var(--space-4);
+    border-left: 3px solid var(--marigold);
+    background: var(--surface);
+  }
+
+  @media (max-width: 40rem) {
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

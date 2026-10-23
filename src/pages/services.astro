@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { services } from '../data/services';
+import { steps } from '../data/content';
+import { getProduct } from '../data/products';
+
+const ways = [
+  {
+    title: 'A one-time project',
+    body: 'We agree the scope, price and timeline in a written quote, build it, launch it and hand it over.',
+  },
+  {
+    title: 'Support and maintenance after launch',
+    body: 'Once your software is live, we can keep looking after it: fixes, small changes and help for your staff.',
+  },
+];
+---
+
+<BaseLayout
+  title="Services"
+  description="Custom business software, websites, data dashboards, AI tools and basic security reviews from Nexvhira, a software company in Pune."
+>
+  <section class="page-head">
+    <div class="container">
+      <h1>Services</h1>
+      <p class="lede">
+        We build software for small and growing businesses: the apps you run your day on, the website customers find
+        you through, and the dashboards that show how it is going.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-label="Our services">
+    <div class="container">
+      <ul role="list" class="service-list">
+        {
+          services.map((s) => {
+            const examples = (s.examples ?? []).map((slug) => getProduct(slug)).filter((p) => p !== undefined);
+            return (
+              <li class="service" id={s.slug}>
+                <div class="service__intro">
+                  <h2>{s.name}</h2>
+                  <p>{s.summary}</p>
+                </div>
+                <div class="service__detail">
+                  <h3>What you get</h3>
+                  <ul class="service__deliverables">
+                    {s.deliverables.map((d) => (
+                      <li>{d}</li>
+                    ))}
+                  </ul>
+                  {examples.length > 0 && (
+                    <>
+                      <h3>See it in practice</h3>
+                      <ul role="list" class="service__examples">
+                        {examples.map((p) => (
+                          <li>
+                            <a href={`/products/${p.slug}/`}>{p.name}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  {s.note && (
+                    <p class="service__note">
+                      <strong>Before we start:</strong> {s.note}
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="process-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="process-title">How a project runs</h2>
+        <p class="lede">You see the price before we start and working screens while we build.</p>
+      </div>
+      <ol role="list" class="steps">
+        {
+          steps.map((s, i) => (
+            <li class="step">
+              <span class="step__num" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="ways-title">
+    <div class="container ways">
+      <h2 id="ways-title">Ways to work with us</h2>
+      <dl class="ways__list">
+        {
+          ways.map((w) => (
+            <div class="ways__item">
+              <dt>{w.title}</dt>
+              <dd>{w.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <CtaBand title="Not sure which service fits?" body="Tell us what you want to fix or build. We will suggest the simplest way to do it, then send a written quote." />
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-block: var(--space-8) var(--space-6);
+  }
+  .page-head .lede {
+    margin-top: var(--space-5);
+  }
+
+  .service-list {
+    margin: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .service {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-5) var(--space-7);
+    padding-block: var(--space-7);
+    border-bottom: 1px solid var(--line-strong);
+    scroll-margin-top: 6rem;
+  }
+  .service__intro h2 {
+    font-size: var(--step-3);
+  }
+  .service__intro p {
+    margin-top: var(--space-4);
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    max-width: 30rem;
+  }
+  .service__detail h3 {
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 600;
+    font-stretch: 100%;
+    letter-spacing: 0;
+    color: var(--ink-soft);
+  }
+  .service__detail h3 + * {
+    margin-top: var(--space-3);
+  }
+  .service__detail > * + h3 {
+    margin-top: var(--space-6);
+  }
+  .service__deliverables {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .service__deliverables li + li {
+    margin-top: var(--space-2);
+  }
+  .service__deliverables li::marker {
+    color: var(--teal);
+  }
+  .service__examples {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+  .service__examples a {
+    font-weight: 600;
+  }
+  .service__note {
+    margin-top: var(--space-6);
+    padding: var(--space-3) var(--space-4);
+    border-left: 3px solid var(--marigold);
+    background: var(--surface);
+  }
+
+  .steps {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+  .step {
+    padding-top: var(--space-4);
+    border-top: 1.5px solid var(--ink);
+  }
+  .step__num {
+    display: block;
+    font-family: var(--font-display);
+    font-stretch: 120%;
+    font-weight: 300;
+    font-size: var(--step-5);
+    line-height: 1;
+    color: var(--teal-bright);
+  }
+  .step h3 {
+    margin-top: var(--space-4);
+    font-size: var(--step-1);
+  }
+  .step p {
+    margin-top: var(--space-2);
+    color: var(--ink-soft);
+  }
+
+  .ways {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .ways__list {
+    border-top: 1.5px solid var(--ink);
+  }
+  .ways__item {
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .ways__item dt {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-stretch: 106%;
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+  .ways__item dd {
+    margin-top: var(--space-2);
+    color: var(--ink-soft);
+    max-width: var(--measure);
+  }
+
+  @media (max-width: 64rem) {
+    .steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56rem) {
+    .service,
+    .ways {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 34rem) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

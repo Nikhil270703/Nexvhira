@@ -1,0 +1,55 @@
+/* Nexvhira design tokens. Change the brand here, not in components. */
+:root {
+  /* Colour */
+  --ink: #0b1d36;          /* deep navy: text, dark bands */
+  --ink-soft: #43546b;     /* secondary text (6.9:1 on white) */
+  --teal: #0a6e70;         /* links, buttons, Marathi lines (6.2:1 on white) */
+  --teal-bright: #13a3a0;  /* large shapes, logo stroke */
+  --teal-glow: #5ee0cf;    /* accents on navy */
+  --mist: #eaf2f4;         /* alternate section background */
+  --page: #f8fafb;         /* page background */
+  --surface: #ffffff;
+  --line: #d3dee4;
+  --line-strong: #a9bac5;
+  --marigold: #f3a712;     /* "Live" status only */
+  --on-dark: #e8f1f4;
+  --on-dark-soft: #a8bccb;
+
+  /* Type */
+  --font-display: 'Anek Latin Variable', 'Anek Devanagari Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-marathi: 'Anek Devanagari Variable', 'Mukta', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Mukta', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Classic scale: 14 · 16 · 18 · 21 · 24 · 30 · 36 · 48 · 60 · 72 */
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.5rem;
+  --step-3: clamp(1.6rem, 1.2rem + 1.4vw, 2.25rem);
+  --step-4: clamp(2rem, 1.3rem + 2.6vw, 3rem);
+  --step-5: clamp(2.5rem, 1.4rem + 4.4vw, 4.5rem);
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 7rem;
+
+  /* Shape: radius grows with the size of the thing */
+  --radius-chip: 4px;
+  --radius-control: 8px;
+  --radius-frame: 14px;
+
+  --shadow-frame: 0 1px 0 rgb(11 29 54 / 0.04), 0 18px 40px -18px rgb(11 29 54 / 0.35);
+
+  --container: 72rem;
+  --measure: 38rem;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
