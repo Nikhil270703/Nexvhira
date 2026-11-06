@@ -1,0 +1,83 @@
+---
+import type { Review } from '../data/reviews';
+import { getProduct } from '../data/products';
+
+/** Renders nothing when there are no reviews. */
+interface Props {
+  reviews: Review[];
+  title?: string;
+  showProduct?: boolean;
+}
+const { reviews, title = 'What customers say', showProduct = false } = Astro.props;
+---
+
+{
+  reviews.length > 0 && (
+    <section class="section reviews" aria-labelledby="reviews-title">
+      <div class="container">
+        <h2 id="reviews-title" class="reviews__title">{title}</h2>
+        <ul role="list" class="reviews__list">
+          {reviews.map((r) => (
+            <li class="review">
+              <blockquote>
+                <p>{r.quote}</p>
+              </blockquote>
+              <p class="review__who">
+                <strong>{r.name}</strong>
+                {(r.role || r.business) && <span>{[r.role, r.business].filter(Boolean).join(', ')}</span>}
+                {showProduct && getProduct(r.product) && (
+                  <a href={`/products/${r.product}/`}>{getProduct(r.product)!.name}</a>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .reviews__title {
+    margin-bottom: var(--space-7);
+    max-width: 30rem;
+  }
+  .reviews__list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-5);
+  }
+  .review {
+    position: relative;
+    padding: var(--space-6) var(--space-5) var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-frame);
+  }
+  .review::before {
+    content: '“';
+    position: absolute;
+    top: -0.35em;
+    left: var(--space-5);
+    font-family: var(--font-display);
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--teal-bright);
+  }
+  .review blockquote p {
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  .review__who {
+    display: grid;
+    gap: 0.1rem;
+    margin-top: var(--space-5);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .review__who strong {
+    color: var(--ink);
+    font-size: var(--step-0);
+  }
+</style>

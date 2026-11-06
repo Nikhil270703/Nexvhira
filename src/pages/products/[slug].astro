@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BrowserFrame from '../../components/BrowserFrame.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Icon from '../../components/Icon.astro';
+import Reviews from '../../components/Reviews.astro';
+import { reviewsFor } from '../../data/reviews';
 import { products, statusLabel } from '../../data/products';
 import { whatsappLink } from '../../data/site';
 import type { Product } from '../../data/types';
@@ -154,6 +156,8 @@ const askText = `Hi Nexvhira, I'd like to know more about ${p.name}.`;
       </div>
     </div>
   </section>
+
+  <Reviews reviews={reviewsFor(p.slug)} title={`What ${p.name} customers say`} />
 
   <section class="section more" aria-labelledby="more-title">
     <div class="container more__grid">

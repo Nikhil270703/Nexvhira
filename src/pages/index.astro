@@ -4,6 +4,8 @@ import BrowserFrame from '../components/BrowserFrame.astro';
 import ProductRow from '../components/ProductRow.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Icon from '../components/Icon.astro';
+import Reviews from '../components/Reviews.astro';
+import { reviews } from '../data/reviews';
 import { site, whatsappLink } from '../data/site';
 import { liveProducts, prototypes, getProduct } from '../data/products';
 import { services } from '../data/services';
@@ -147,6 +149,8 @@ const firstClient = clients[0];
       </ol>
     </div>
   </section>
+
+  <Reviews reviews={reviews} showProduct />
 
   <!-- FAQ -->
   <section class="section section--mist" aria-labelledby="faq-title">

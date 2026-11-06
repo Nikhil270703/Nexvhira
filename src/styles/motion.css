@@ -1,0 +1,303 @@
+/*
+ * Motion and card effects. Everything here is switched off for visitors who ask
+ * for reduced motion, and the page reads fine if the script never runs.
+ * Selectors use :where() so page styles still win on specificity.
+ */
+
+/* ---------- Scroll reveal (script adds .motion-ready to <html>) ---------- */
+.motion-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.motion-ready [data-reveal='left'] {
+  transform: translateX(-28px);
+}
+.motion-ready [data-reveal='right'] {
+  transform: translateX(28px);
+}
+@media (max-width: 56rem) {
+  .motion-ready [data-reveal='left'],
+  .motion-ready [data-reveal='right'] {
+    transform: translateY(22px);
+  }
+}
+main {
+  overflow-x: clip;
+}
+.motion-ready [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Hero headline: words rise in ---------- */
+.motion-ready .hero h1 .w {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.45em);
+  animation: word-in 650ms var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 80ms);
+}
+@keyframes word-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Hero backdrop and floating screens ---------- */
+:where(.hero) {
+  position: relative;
+  isolation: isolate;
+}
+:where(.hero__stack) {
+  --px: 0;
+  --py: 0;
+}
+:where(.hero__stack)::before {
+  content: '';
+  position: absolute;
+  inset: 6% -8% -4% 4%;
+  z-index: -1;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgb(19 163 160 / 0.28), transparent 70%) 20% 30% / 70% 70% no-repeat,
+    radial-gradient(closest-side, rgb(11 29 54 / 0.18), transparent 70%) 80% 70% / 70% 70% no-repeat;
+  filter: blur(18px);
+  animation: drift 14s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  to {
+    transform: translate(-4%, 3%) rotate(8deg) scale(1.06);
+  }
+}
+:where(.hero__card) > :where(.frame) {
+  translate: calc(var(--px) * var(--depth, 10px)) calc(var(--py) * var(--depth, 10px));
+  transition:
+    translate 400ms var(--ease-out),
+    box-shadow 300ms var(--ease-out);
+  animation: bob 7s ease-in-out infinite;
+}
+:where(.hero__card--1) > :where(.frame) {
+  --depth: 8px;
+  animation-delay: -2s;
+}
+:where(.hero__card--2) > :where(.frame) {
+  --depth: 16px;
+  animation-delay: -4.5s;
+}
+:where(.hero__card--3) > :where(.frame) {
+  --depth: 26px;
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+:where(.hero__card):hover {
+  z-index: 3;
+}
+
+/* ---------- Screenshot frames: tilt + shine ---------- */
+:where(.product-row__media, .product-hero__media) {
+  perspective: 1100px;
+}
+:where(.product-row__media, .product-hero__media) :where(.frame) {
+  position: relative;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0));
+  transform-style: preserve-3d;
+  transition:
+    transform 450ms var(--ease-out),
+    box-shadow 450ms var(--ease-out);
+  will-change: transform;
+}
+:where(.product-row__media, .product-hero__media):hover :where(.frame) {
+  --lift: -6px;
+  box-shadow:
+    0 1px 0 rgb(11 29 54 / 0.04),
+    0 34px 60px -24px rgb(11 29 54 / 0.45);
+}
+:where(.frame)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.35) 48%, transparent 62%);
+  transform: translateX(-120%);
+  transition: transform 900ms var(--ease-out);
+}
+:where(.product-row__media, .product-hero__media, .hero__card):hover :where(.frame)::after {
+  transform: translateX(120%);
+}
+
+/* ---------- Ruled list items become interactive rows ---------- */
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item, .service) {
+  position: relative;
+  transition: background-color 250ms var(--ease-out);
+}
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--teal-bright);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 300ms var(--ease-out);
+}
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item):hover::before,
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item):focus-within::before {
+  transform: scaleY(1);
+}
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item):hover {
+  background-color: rgb(19 163 160 / 0.06);
+}
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item) > * {
+  transition: transform 300ms var(--ease-out);
+}
+:where(.services__item, .lab__item, .proto, .more__item, .ways__item):hover > * {
+  transform: translateX(10px);
+}
+
+/* Services page: each service block gets a gentle card lift */
+:where(.service) {
+  border-radius: var(--radius-frame);
+}
+
+/* ---------- Process steps ---------- */
+:where(.step) {
+  position: relative;
+  transition: transform 300ms var(--ease-out);
+}
+:where(.step)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  height: 1.5px;
+  width: 0;
+  background: var(--teal-bright);
+  transition: width 900ms var(--ease-out) 200ms;
+}
+:where(.step.is-in)::after,
+:where(.step):hover::after {
+  width: 100%;
+}
+:where(.step):hover {
+  transform: translateY(-4px);
+}
+:where(.step__num) {
+  transition: color 300ms var(--ease-out);
+}
+:where(.step):hover :where(.step__num) {
+  color: var(--teal);
+}
+
+/* ---------- Buttons ---------- */
+:where(.btn) {
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    transform 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+:where(.btn):hover {
+  transform: translateY(-2px);
+}
+:where(.btn):active {
+  transform: translateY(0);
+}
+:where(.btn--primary):hover {
+  box-shadow: 0 10px 22px -10px rgb(10 110 112 / 0.7);
+}
+:where(.btn--primary)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%);
+  transform: translateX(-130%);
+  transition: transform 700ms var(--ease-out);
+}
+:where(.btn--primary):hover::after {
+  transform: translateX(130%);
+}
+:where(.btn) :where(svg) {
+  transition: transform 250ms var(--ease-out);
+}
+:where(.btn):hover :where(svg) {
+  transform: scale(1.12) rotate(-6deg);
+}
+
+/* External-link arrows nudge out */
+:where(.text-link) :where(svg) {
+  transition: transform 200ms var(--ease-out);
+}
+:where(.text-link):hover :where(svg) {
+  transform: translate(2px, -2px);
+}
+
+/* ---------- Small details ---------- */
+.status--live::before {
+  animation: live-pulse 2.4s ease-out infinite;
+}
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(243 167 18 / 0.55);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px rgb(243 167 18 / 0);
+  }
+}
+.site-header {
+  transition: box-shadow 250ms var(--ease-out);
+}
+.site-header.is-scrolled {
+  box-shadow: 0 8px 24px -16px rgb(11 29 54 / 0.35);
+}
+:where(.faq__item) {
+  transition: background-color 250ms var(--ease-out);
+}
+:where(.faq__item):hover {
+  background-color: rgb(19 163 160 / 0.05);
+}
+:where(.faq__item[open]) p {
+  animation: faq-open 350ms var(--ease-out);
+}
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* ---------- Reduced motion: keep everything still ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .motion-ready [data-reveal],
+  .motion-ready .hero h1 .w {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  :where(.hero__stack)::before,
+  :where(.hero__card) > :where(.frame),
+  .status--live::before {
+    animation: none !important;
+  }
+  :where(.btn, .step, .services__item, .lab__item, .proto, .more__item, .ways__item):hover,
+  :where(.services__item, .lab__item, .proto, .more__item, .ways__item):hover > * {
+    transform: none !important;
+  }
+}
