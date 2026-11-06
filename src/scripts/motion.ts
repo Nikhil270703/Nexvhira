@@ -32,7 +32,7 @@ if (!reduce) {
 
   // 2. Scroll reveals. Groups of siblings get a stagger index.
   const groups: Array<[string, string?]> = [
-    ['.hero__mr, .hero .lede, .hero .btn-row'],
+    ['.hero__sub, .hero .lede, .hero .btn-row'],
     ['.section-head, .page-head, .prototypes__head, .more__head, .services__head, .lab__head'],
     ['.product-row__body', 'right'],
     ['.product-row__media', 'left'],

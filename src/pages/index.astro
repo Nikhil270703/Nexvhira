@@ -26,7 +26,7 @@ const firstClient = clients[0];
     <div class="container hero__grid">
       <div class="hero__text">
         <h1>{site.tagline}</h1>
-        <p class="hero__mr marathi" lang="mr">{site.taglineMr}</p>
+        <p class="hero__sub">{site.subTagline}</p>
         <p class="lede">
           Nexvhira is a software company in Pune. We build stock, billing, order and institute-management apps for
           local businesses, in English and मराठी, on the phones your team already uses.
@@ -190,7 +190,12 @@ const firstClient = clients[0];
   .hero h1 {
     max-width: 14ch;
   }
-  .hero__mr {
+  .hero__sub {
+    font-family: var(--font-display);
+    font-weight: 560;
+    font-stretch: 108%;
+    color: var(--teal);
+    line-height: 1.25;
     font-size: var(--step-3);
     margin-top: var(--space-4);
   }

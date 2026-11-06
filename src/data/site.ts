@@ -7,7 +7,8 @@ export const site = {
   /** Legal form. Stays plain "Nexvhira" until registration is complete. */
   legalName: 'Nexvhira',
   tagline: 'Software that speaks the language of your business.',
-  taglineMr: 'तुमच्या व्यवसायाच्या भाषेत बोलणारे सॉफ्टवेअर',
+  /** Short line under the main tagline on the home page. */
+  subTagline: 'Built in Pune for shops, mills and institutes.',
   description:
     'Nexvhira is a software company in Pune. We build business software, websites, dashboards and AI tools for small and growing businesses, in English and Marathi.',
   city: 'Pune',
